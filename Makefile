@@ -1,4 +1,4 @@
-all: fwparser
+all: fwparser goprom
 
 clean:
-	rm -f fwparser *~
+	rm -f fwparser goprom *~
