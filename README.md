@@ -4,3 +4,8 @@ Everything here is completely unsupported. Use everything at your own risk.
 There author takes no responsibility for anything that happens as a result
 of using this software.
 
+fwparser:
+	Usage:
+		fwparser firmware.bin > unpack-firmware.sh
+		chmod +x unpack-firmware.sh
+		./unpack-firmware.sh firmware.bin
