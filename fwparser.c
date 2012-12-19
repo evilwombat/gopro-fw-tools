@@ -70,6 +70,8 @@ int find_magic(void)
 		if (c == 0x90)
 			state = 1;
 	}
+
+	return -1;
 }
 
 unsigned int read_word(void)
