@@ -26,6 +26,7 @@ FILE *fd;
 
 /* Magic is 0xA3 0x24 0xEB 0x90 */
 
+int find_magic(void);
 int find_magic(void)
 {
 	int c;
@@ -65,13 +66,21 @@ int find_magic(void)
 
 				} else
 					state = 0;
+				break;
+
+			default:
+				fprintf(stderr, "Unexpected state %u in find_magic", state);
+				return -1;
 		}
 
 		if (c == 0x90)
 			state = 1;
 	}
+
+	return -1;
 }
 
+unsigned int read_word(void);
 unsigned int read_word(void)
 {
 	unsigned int r = 0;
@@ -88,6 +97,7 @@ unsigned int read_word(void)
  */
 int main(int argc, char **argv)
 {
+	int verbose = 0;
 	int ret = 0;
 	unsigned int crc, version, build_date, length, flags, magic;
 	unsigned int section_offset, num = 0;
@@ -125,20 +135,27 @@ int main(int argc, char **argv)
 		fseek(fd, 0x100-28, SEEK_CUR);
 		section_offset = ftell(fd);
 		fseek(fd, length, SEEK_CUR);
-/*
-		printf("Section found\n");
-		printf("\tCRC\t= %08x\n", crc);
-		printf("\tVersion = %08x\n", version);
-		printf("\tBuild\t= %08x\n", build_date);
-		printf("\tLength\t= %08x\n", length);
-		printf("\tFlags\t= %08x\n", flags);
-		printf("\tMagic\t= %08x\n", magic);
-*/
+
+		if (verbose)
+		{
+			fprintf(stderr, "Section found\n");
+			fprintf(stderr, "\tCRC\t= %08x\n", crc);
+			fprintf(stderr, "\tVersion = %08x\n", version);
+			fprintf(stderr, "\tBuild\t= %08x\n", build_date);
+			fprintf(stderr, "\tLength\t= %08x\n", length);
+			fprintf(stderr, "\tFlags\t= %08x\n", flags);
+			fprintf(stderr, "\tMagic\t= %08x\n", magic);
+		}
 
 		printf("# section_%d at offset %d length %d CRC 0x%08x\n",
 			num, section_offset, length, crc);
+#ifdef _LINUX
 		printf("dd if=$1 bs=%d skip=1 | dd iflag=fullblock of=section_%d bs=%d count=1\n",
 			section_offset, num, length);
+#else
+		printf("dd if=$1 skip=%d conv=notrunc of=section_%d count=%d bs=1\n",
+			section_offset, num, length);
+#endif
 		printf("\n");
 		num++;
 	}

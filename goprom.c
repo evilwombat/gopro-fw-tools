@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
 
 struct inode {
 	char name[0x73];
@@ -29,9 +30,11 @@ struct inode {
 	int magic;
 };
 
+unsigned int read_word(FILE *fd);
 unsigned int read_word(FILE *fd)
 {
 	unsigned int r = 0;
+
 	r |= fgetc(fd) <<  0;
 	r |= fgetc(fd) <<  8;
 	r |= fgetc(fd) << 16;
@@ -41,6 +44,7 @@ unsigned int read_word(FILE *fd)
 
 #define INODE_MAGIC 0x2387AB76
 
+void print_usage(void);
 void print_usage(void)
 {
 	fprintf(stderr, "Usage:\n");
@@ -54,8 +58,9 @@ void print_usage(void)
 
 int main(int argc, char **argv)
 {
-	int i, nfiles, update = 0;
-	struct inode d;
+	int		i, nfiles, update = 0;
+	struct inode	d;
+	FILE		*fd;
 
 	if (argc != 3) {
 		print_usage();
@@ -75,7 +80,7 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 	
-	FILE *fd = fopen(argv[2], "r");
+	fd = fopen(argv[2], "r");
 
 	if (!fd) {
 		fprintf(stderr, "Could not open %s\n", argv[2]);
@@ -108,5 +113,8 @@ int main(int argc, char **argv)
 			printf("dd if=%s of=$1 bs=1 seek=%d count=%d conv=notrunc\n",
 				d.name, d.offset, d.len);
 	}
+
 	fclose(fd);
+
+	return 0;
 }
