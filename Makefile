@@ -25,8 +25,8 @@ CFLAGS += -Wformat=2 -Wformat-security -Wmissing-format-attribute
 CFLAGS += -fshort-enums -fstrict-aliasing -fno-common
 CFLAGS += -D_REENTRANT -D_THREAD_SAFE -pipe
 
-all: fwparser goprom
+all: fwparser goprom fwunpacker
 
 clean:
-	rm -f fwparser goprom *~
+	rm -f fwparser goprom fwunpacker *~
 
