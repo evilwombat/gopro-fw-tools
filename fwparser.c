@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
 	fname = argv[1];
 	
-	fd = fopen(fname, "r");
+	fd = fopen(fname, "rb");
 	if (!fd) {
 		printf("Could not open %s\n", fname);
 		return -1;

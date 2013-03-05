@@ -97,7 +97,7 @@ int save_section(const char *output_name, int length)
 	FILE *ofd;
 	int i;
 	char t;
-	ofd = fopen(output_name, "w+");
+	ofd = fopen(output_name, "wb+");
 
 	if (!ofd) {
 		printf("Could not write to %s\n", output_name);
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 
 	fname = argv[1];
 	
-	fd = fopen(fname, "r");
+	fd = fopen(fname, "rb");
 	if (!fd) {
 		printf("Could not open %s\n", fname);
 		return -1;

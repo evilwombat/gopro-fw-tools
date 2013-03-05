@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 	
-	fd = fopen(argv[2], "r");
+	fd = fopen(argv[2], "rb");
 
 	if (!fd) {
 		fprintf(stderr, "Could not open %s\n", argv[2]);
