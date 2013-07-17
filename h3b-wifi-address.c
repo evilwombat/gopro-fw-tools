@@ -202,13 +202,14 @@ int main(int argc, char **argv)
 	if (size != 0x6e7ec || crc != 0x0422a2eb) {
 		printf("Unrecognized firmware file!\n");
 		printf("This only works on the H3 Black v239 WF3.03-app.bin file.\n");
-		return -1;
+		goto fail;
 	}
 
 	printf("Patching firmware...\n");
 	ret = patch_buffer(buf, h3b_v239_wifi_addr_patch, patch_byte, 5);
 	if (ret) {
 		printf("Error patching buffer: %d\n", ret);
+		goto fail;
 	}
 
 	crc = crc32(buf, size);
@@ -216,7 +217,11 @@ int main(int argc, char **argv)
 	write_word(buf, CRC_OFFSET, crc);
 
 	printf("Saving output file: %s\n", output_name);
-	save_file(output_name, size, buf);
+	ret = save_file(output_name, size, buf);
+	if (ret) {
+		printf("Error saving file: %d\n", ret);
+		goto fail;
+	}
 	printf("Done.\n");
 
 fail:
