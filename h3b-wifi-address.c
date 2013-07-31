@@ -34,13 +34,13 @@ void print_usage(const char *name);
 #define SIZE_OFFSET 0x3f8
 #define CRC_OFFSET 0x3fc
 
-int h3b_v239_wifi_addr_patch[] = {
-	0x3fdc,
-	0x4328,
-	0x4438,
-	0x230f2,
-	0x2337a,
-	0x6db82,
+int h3b_v300_wifi_addr_patch[] = {
+	0x4164,
+	0x44b0,
+	0x45c0,
+	0x225f2,
+	0x2287a,
+	0x6a38a,
 	-1
 };
 
@@ -199,14 +199,14 @@ int main(int argc, char **argv)
 		goto fail;
 	}
 
-	if (size != 0x6e7ec || crc != 0x0422a2eb) {
+	if (size != 0x0006aecc || crc != 0x815f3add) {
 		printf("Unrecognized firmware file!\n");
-		printf("This only works on the H3 Black v239 WF3.03-app.bin file.\n");
+		printf("This only works on the H3 Black v300 WF3.03-app.bin file.\n");
 		goto fail;
 	}
 
 	printf("Patching firmware...\n");
-	ret = patch_buffer(buf, h3b_v239_wifi_addr_patch, patch_byte, 5);
+	ret = patch_buffer(buf, h3b_v300_wifi_addr_patch, patch_byte, 5);
 	if (ret) {
 		printf("Error patching buffer: %d\n", ret);
 		goto fail;
