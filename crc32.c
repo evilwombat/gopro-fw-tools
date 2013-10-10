@@ -7,10 +7,10 @@
 #include "crc32.h"
 
 /* Table of CRCs of all 8-bit messages. */
-unsigned long crc_table[256];
+static unsigned long crc_table[256];
 
 /* Flag: has the table been computed? Initially false. */
-int crc_table_computed = 0;
+static int crc_table_computed = 0;
 
 /* Make the table for a fast CRC. */
 static void make_crc_table(void);

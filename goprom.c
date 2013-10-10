@@ -30,8 +30,8 @@ struct inode {
 	int magic;
 };
 
-unsigned int read_word(FILE *fd);
-unsigned int read_word(FILE *fd)
+static unsigned int read_word(FILE *fd);
+static unsigned int read_word(FILE *fd)
 {
 	unsigned int r = 0;
 
@@ -44,8 +44,8 @@ unsigned int read_word(FILE *fd)
 
 #define INODE_MAGIC 0x2387AB76
 
-void print_usage(void);
-void print_usage(void)
+static void print_usage(void);
+static void print_usage(void)
 {
 	fprintf(stderr, "Usage:\n");
 	fprintf(stderr, "	goprom --unpack romfs_section > unpack-romfs.sh\n");
