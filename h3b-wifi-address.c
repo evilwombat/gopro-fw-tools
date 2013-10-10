@@ -23,10 +23,11 @@
 #include <fcntl.h>
 #include <inttypes.h>
 
+#include "crc32.h"
+
 int read_file(FILE *fd, unsigned char *buf, int size);
 uint32_t read_word(unsigned char *buf, int offset);
 void write_word(unsigned char *buf, int offset, uint32_t word);
-unsigned long crc32(unsigned char *, int);
 int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned char old_val);
 int save_file(const char *output_name, int size, unsigned char *buf);
 void print_usage(const char *name);

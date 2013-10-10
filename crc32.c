@@ -4,6 +4,8 @@
  * http://www.faqs.org/rfcs/rfc1952.html
  */
 
+#include "crc32.h"
+
 /* Table of CRCs of all 8-bit messages. */
 unsigned long crc_table[256];
 
@@ -11,7 +13,8 @@ unsigned long crc_table[256];
 int crc_table_computed = 0;
 
 /* Make the table for a fast CRC. */
-void make_crc_table(void)
+static void make_crc_table(void);
+static void make_crc_table(void)
 {
 	unsigned long c;
 
@@ -43,7 +46,9 @@ void make_crc_table(void)
    }
    if (crc != original_crc) error();
 */
-unsigned long update_crc(unsigned long crc,
+static unsigned long update_crc(unsigned long crc,
+                unsigned char *buf, int len);
+static unsigned long update_crc(unsigned long crc,
                 unsigned char *buf, int len)
 {
 	unsigned long c = crc ^ 0xffffffffL;
