@@ -23,18 +23,12 @@
 #include <fcntl.h>
 #include <inttypes.h>
 
-int read_file(FILE *fd, unsigned char *buf, int size);
-uint32_t read_word(unsigned char *buf, int offset);
-void write_word(unsigned char *buf, int offset, uint32_t word);
-unsigned long crc32(unsigned char *, int);
-int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned char old_val);
-int save_file(const char *output_name, int size, unsigned char *buf);
-void print_usage(const char *name);
+#include "crc32.h"
 
 #define SIZE_OFFSET 0x3f8
 #define CRC_OFFSET 0x3fc
 
-int h3b_v300_wifi_addr_patch[] = {
+static int h3b_v300_wifi_addr_patch[] = {
 	0x4164,
 	0x44b0,
 	0x45c0,
@@ -44,7 +38,8 @@ int h3b_v300_wifi_addr_patch[] = {
 	-1
 };
 
-int read_file(FILE *fd, unsigned char *buf, int size)
+static int read_file(FILE *fd, unsigned char *buf, int size);
+static int read_file(FILE *fd, unsigned char *buf, int size)
 {
 	int ret;
 	ret = fread(buf, size, 1, fd);
@@ -54,7 +49,8 @@ int read_file(FILE *fd, unsigned char *buf, int size)
 /*
  * FW header appears to be big-endian ?
  */
-uint32_t read_word(unsigned char *buf, int offset)
+static uint32_t read_word(unsigned char *buf, int offset);
+static uint32_t read_word(unsigned char *buf, int offset)
 {
 	return (buf[offset] << 24) |
 	       (buf[offset+1] << 16) |
@@ -62,7 +58,8 @@ uint32_t read_word(unsigned char *buf, int offset)
 	       (buf[offset+3]);
 }
 
-void write_word(unsigned char *buf, int offset, uint32_t word)
+static void write_word(unsigned char *buf, int offset, uint32_t word);
+static void write_word(unsigned char *buf, int offset, uint32_t word)
 {
 	buf[offset] = word >> 24;
 	buf[offset+1] = word >> 16;
@@ -70,7 +67,8 @@ void write_word(unsigned char *buf, int offset, uint32_t word)
 	buf[offset+3] = word;
 }
 
-int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned char old_val)
+static int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned char old_val);
+static int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned char old_val)
 {
 	int i;
 
@@ -87,7 +85,8 @@ int patch_buffer(unsigned char *buf, int *offsets, unsigned char val, unsigned c
 	return 0;
 }
 
-int save_file(const char *output_name, int size, unsigned char *buf)
+static int save_file(const char *output_name, int size, unsigned char *buf);
+static int save_file(const char *output_name, int size, unsigned char *buf)
 {
 	FILE *ofd;
 	int ret;
@@ -102,7 +101,8 @@ int save_file(const char *output_name, int size, unsigned char *buf)
 	return ret == 1 ? 0 : -1;
 }
 
-void print_usage(const char *name)
+static void print_usage(const char *name);
+static void print_usage(const char *name)
 {
 	printf("Usage: %s [firmware file] [address digit] [output filename]\n", name);
 
