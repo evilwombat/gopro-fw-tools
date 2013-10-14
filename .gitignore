@@ -1,0 +1,9 @@
+# Objects
+*.o
+
+# Binaries
+fwparser
+fwunpacker
+goprom
+h3b-wifi-address
+

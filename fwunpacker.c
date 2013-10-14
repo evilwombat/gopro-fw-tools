@@ -22,12 +22,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-FILE *fd;
+static FILE *fd;
 
 /* Magic is 0xA3 0x24 0xEB 0x90 */
 
-int find_magic(void);
-int find_magic(void)
+static int find_magic(void);
+static int find_magic(void)
 {
 	int c;
 	int state = 0;
@@ -80,8 +80,8 @@ int find_magic(void)
 	return -1;
 }
 
-unsigned int read_word(void);
-unsigned int read_word(void)
+static unsigned int read_word(void);
+static unsigned int read_word(void)
 {
 	unsigned int r = 0;
 	r |= fgetc(fd) <<  0;
@@ -91,8 +91,8 @@ unsigned int read_word(void)
 	return r;
 }
 
-int save_section(const char *output_name, int length);
-int save_section(const char *output_name, int length)
+static int save_section(const char *output_name, int length);
+static int save_section(const char *output_name, int length)
 {
 	FILE *ofd;
 	int i;
