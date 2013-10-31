@@ -38,6 +38,42 @@ static int h3b_v300_wifi_addr_patch[] = {
 	-1
 };
 
+static int h3pb_v104_wifi_addr_patch[] = {
+	0x42b8,
+	0x4644,
+	0x47b6,
+	0x2342c,
+	0x236fc,
+	0x6a59a,
+	-1
+};
+
+struct wifi_fw_type {
+	const char *name;
+	unsigned int size;
+	unsigned int crc;
+	unsigned char old_val;
+	int *patch;
+};
+
+struct wifi_fw_type wifi_fw_list[] = {
+	{
+		.name	 = "Hero3 (White/Silver/Black) v300 Wifi Firmware",
+		.size	 = 0x0006aecc,
+		.crc	 = 0x815f3add,
+		.old_val = 5,
+		.patch	 = h3b_v300_wifi_addr_patch,
+	},
+	{
+		.name	 = "Hero3 Plus Black (and Silver?) v104 Wifi Firmware",
+		.size	 = 0x0006b5d4,
+		.crc	 = 0x95d70245,
+		.old_val = 5,
+		.patch	 = h3pb_v104_wifi_addr_patch,
+	},
+	{ },	/* End of list */
+};
+
 static int read_file(FILE *fd, unsigned char *buf, int size);
 static int read_file(FILE *fd, unsigned char *buf, int size)
 {
@@ -106,7 +142,7 @@ static void print_usage(const char *name)
 {
 	printf("Usage: %s [firmware file] [address digit] [output filename]\n", name);
 
-	printf("Patch Gopro Hero3 Black Wifi Firmware with custom IP address\n");
+	printf("Patch Gopro Wifi Firmware with custom IP address\n");
 	printf("New camera address will be 10.X.5.9\n");
 	printf("New computer address will be 10.X.5.109\n");
 	printf("Where X is the address digit specified\n");
@@ -117,10 +153,12 @@ int main(int argc, char **argv)
 	FILE *in_fd;
 	char *fname, *output_name;
 	struct stat st;
-	int ret, size, hdr_size;
+	int ret;
+	unsigned int size, hdr_size;
 	unsigned char *buf;
 	uint32_t crc, hdr_crc;
 	int patch_byte = 8;
+	struct wifi_fw_type *wifi_fw = wifi_fw_list;
 
 	printf("MAKE SURE YOU HAVE READ THE INSTRUCTIONS!\n");
 	printf("The author makes absolutely NO GUARANTEES of the correctness of this program\n");
@@ -199,14 +237,33 @@ int main(int argc, char **argv)
 		goto fail;
 	}
 
-	if (size != 0x0006aecc || crc != 0x815f3add) {
-		printf("Unrecognized firmware file!\n");
-		printf("This only works on the H3 Black v300 WF3.03-app.bin file.\n");
+	/*
+	 * Checking both the size and CRC is probably redundant, but we may
+	 * as well be careful
+	 */
+	while (wifi_fw->name) {
+		if (wifi_fw->size == size && wifi_fw->crc == crc)
+			break;
+		wifi_fw++;
+	}
+
+	if (wifi_fw->name == NULL) {
+		printf("\nUnrecognized firmware file!\n");
+		printf("This only works on the following firmware files:\n");
+
+		wifi_fw = wifi_fw_list;
+		while (wifi_fw->name) {
+			printf("\t * %s\n", wifi_fw->name);
+			wifi_fw++;
+		}
+
 		goto fail;
 	}
 
+	printf("Detected firmware type: \"%s\"\n", wifi_fw->name);
+
 	printf("Patching firmware...\n");
-	ret = patch_buffer(buf, h3b_v300_wifi_addr_patch, patch_byte, 5);
+	ret = patch_buffer(buf, wifi_fw->patch, patch_byte, wifi_fw->old_val);
 	if (ret) {
 		printf("Error patching buffer: %d\n", ret);
 		goto fail;
