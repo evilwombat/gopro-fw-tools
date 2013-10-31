@@ -120,8 +120,9 @@ int main(int argc, char **argv)
 {
 	int verbose = 0;
 	int ret = 0;
-	unsigned int crc, version, build_date, length, flags, magic;
+	unsigned int crc, version, build_date, flags, magic;
 	unsigned int section_offset, num = 0;
+	int length;
 	char *fname;
 	char name_buf[20];
 
@@ -156,6 +157,9 @@ int main(int argc, char **argv)
 		magic = read_word();
 		fseek(fd, 0x100-28, SEEK_CUR);
 		section_offset = ftell(fd);
+
+		if (length < 0)
+			continue;
 
 		if (verbose)
 		{
