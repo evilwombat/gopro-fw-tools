@@ -48,6 +48,16 @@ static int h3pb_v104_wifi_addr_patch[] = {
 	-1
 };
 
+static int h3pb_v200_wifi_addr_patch[] = {
+	0x4658,
+	0x4a30,
+	0x4ba2,
+	0x231bc,
+	0x2348c,
+	0x6a6fa,
+	-1
+};
+
 struct wifi_fw_type {
 	const char *name;
 	unsigned int size;
@@ -70,6 +80,13 @@ struct wifi_fw_type wifi_fw_list[] = {
 		.crc	 = 0x95d70245,
 		.old_val = 5,
 		.patch	 = h3pb_v104_wifi_addr_patch,
+	},
+	{
+		.name	 = "Hero3 Plus Black (and Silver?) v200 Wifi Firmware",
+		.size	 = 0x0006b738,
+		.crc	 = 0x9badcb31,
+		.old_val = 5,
+		.patch	 = h3pb_v200_wifi_addr_patch,
 	},
 	{ },	/* End of list */
 };
