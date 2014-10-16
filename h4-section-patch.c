@@ -395,6 +395,17 @@ int main(int argc, char **argv)
 		}
 	}
 	
+	if (sections[target_section].length < replacement_size) {
+		printf("\n**************************************************************\n");
+		printf("ERROR!! The replacement section will not fit into the firmware.\n");
+		printf("Your replacement file for section_%d has length %d bytes.\n", target_section, replacement_size);
+		printf("In the firmware, this section is only %d bytes long.\n", sections[target_section].length);
+		printf("Your replacement section is too long by %d bytes.\n",
+			replacement_size - sections[target_section].length);
+		printf("This will not work.\n");
+		return -1;
+	}
+
 	printf("\nReplacing target section...\n");
 	/* Zero out replacement section in case we are zero-padding */
 	memset(fw_buf + sections[target_section].offset, 0, sections[target_section].length);
@@ -411,21 +422,9 @@ int main(int argc, char **argv)
 	
 	write_word_le(fw_buf, 0, new_global_crc);
 	
-	printf("\n");
-	if (sections[target_section].length < replacement_size) {
-		printf("**************************************************************\n");
-		printf("ERROR!! The replacement section will not fit into the firmware.\n");
-		printf("Your replacement file for section_%d has length %d bytes.\n", target_section, replacement_size);
-		printf("In the firmware, this section is only %d bytes long.\n", sections[target_section].length);
-		printf("Your replacement section is too long by %d bytes.\n",
-			replacement_size - sections[target_section].length);
-		printf("This will not work.\n");
-		return -1;
-	}
-	
 	old_num_sections = num_sections;
 
-	printf("Rescanning resulting firmware for sanity...\n");
+	printf("\nRescanning resulting firmware for sanity...\n");
 	num_sections = parse_firmware(fw_buf, fw_size, sections, MAX_SECTIONS);
 	if (num_sections <= 0) {
 		printf("The new firmware looks invalid!!\nThis is definitely a bug in this program.\n");
